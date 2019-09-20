@@ -83,3 +83,76 @@ void SellSort(auto &data, int length){
 }
 
 */
+
+#include <iostream>
+
+using namespace std;
+
+void print(auto &data, int length); // 打印
+
+
+/** @brief  希尔排序 a algorithm about sorting
+@param data : the citing of array or vector.
+@param length: the length of data
+*/
+void SellSort(auto &data, int length);
+
+/** @brief  数组跳跃式插入排序 a algorithm about sorting
+data[index] 位于子序列  ( ...data[index-3*gap], data[index-2*gap], data[index-gap], data[index],　data[index+gap], data[index+2*gap] ...)中
+其中( ...data[index-3*gap], data[index-2*gap], data[index-gap])部分已经排好序了
+所以该函数将data[index]在( ...data[index-3*gap], data[index-2*gap], data[index-gap])中进行插入排序，排序的方式类似于　冒泡排序。
+
+@param data : the citing of array or vector.
+@param index: the data that you want to inset
+@param gap: Jump interval
+
+*/
+void jump_insert_sort(auto &data, int index, int gap);
+int main(){
+    //答案: 1,1,2,2, 2,4, 6,6,7,21,23,213
+    int data[] = {1,2,6,21,6,2,213,7,4,2,1,23};
+    int length = 12;
+
+    print(data, length);
+
+    SellSort(data, length);
+
+    print(data, length);
+}
+
+
+void SellSort(auto &data, int length){
+    // 一次跳跃分割还不够，不要多次重复，而且每次的分割的gap要求不同
+    // 跨度 gap 从　length/2, 不断减小，最终为1, 当gap为１时，就是最终对整个序列排序
+    for(int gap = length/2; gap >= 1; gap = gap/2){
+
+        // 对于每一次gap跳跃分割，处理gap开始　到　length　的每一个点，每相邻的两个点的子序列其实在不同的
+        for(int index = gap; index <= length-1; index++){
+
+            //该函数将data[index]在( ...data[index-3*gap], data[index-2*gap], data[index-gap])中进行插入排序，排序的方式类似于　冒泡排序。
+            jump_insert_sort(data,index,gap);
+        }
+    }
+}
+
+void jump_insert_sort(auto &data, int index, int gap){
+    //类似于冒泡排序
+    //要插的值是data[index]
+    //插入到序列 ( ...data[index-3*gap], data[index-2*gap], data[index-gap])　中
+    for(int j = index - gap; j >=0; j = j-gap){
+
+        if(data[index] < data[j]){
+            auto a = data[index];
+            data[index] = data[j];
+            data[j] = a;
+        }
+        index = j;
+    }
+}
+
+void print(auto &data, int length){
+    std::cout << std::endl;
+    for(int i = 0; i < length; i++){
+        std::cout << data[i] << " ";
+    }
+}
